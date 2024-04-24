@@ -14,7 +14,7 @@ export const blogRouter = new Hono<{
 }>();
 
 blogRouter.use("/*", async (c, next) => {
-  const jwt = c.req.header("Authorization");
+  const jwt = c.req.header("authorization");
   if (!jwt) {
     c.status(401);
     return c.json({ error: "unauthorized" });
@@ -80,20 +80,18 @@ blogRouter.get("/bulk", async (c) => {
   });
 });
 
-blogRouter.get("/get/:id", (c) => {
+blogRouter.get("/get/:id", async (c) => {
   const id = c.req.param("id");
   const prisma = new PrismaClient({
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
   try {
-    const data = prisma.post.findUnique({
+    const data = await prisma.post.findUnique({
       where: {
-        id: id,
+        id,
       },
     });
-    return c.json({
-      data,
-    });
+    return c.json(data);
   } catch (e) {
     c.status(411);
     return c.json({
