@@ -53,3 +53,7 @@ userRouter.post("/signin", async (c) => {
 
   return c.json({ jwt });
 });
+
+userRouter.get("/test", (c) => {
+  return c.text("helo user ");
+});
